@@ -12,6 +12,7 @@ import java.util.List;
 @RequestMapping("/api/v1/students")
 @RequiredArgsConstructor
 public class StudentController {
+
     @Autowired
     private final StudentService studentService;
 
@@ -20,7 +21,7 @@ public class StudentController {
         return studentService.getAllStudents();
     }
 
-    @GetMapping("/{group}")
+    @GetMapping("/group/{group}")
     public List<Student> getStudentsByGroup(@PathVariable String group) {
         return studentService.getStudentsByGroup(group);
     }

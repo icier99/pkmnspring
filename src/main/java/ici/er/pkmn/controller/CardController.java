@@ -14,6 +14,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/cards")
 @RequiredArgsConstructor
 public class CardController {
+
     @Autowired
     private final CardService cardService;
 

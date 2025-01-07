@@ -21,7 +21,7 @@ public class StudentDao {
     @SneakyThrows
     public StudentEntity getBySurNameAndFirstNameAndFamilyName(String surName, String firstName, String familyName) {
         return studententityrepository.findBySurNameAndFirstNameAndFamilyName(surName, firstName, familyName).orElseThrow(
-                () -> new UserPrincipalNotFoundException("Not Found"));
+                () -> new IllegalArgumentException("Not Found"));
     }
 
     @SneakyThrows

@@ -9,7 +9,6 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,19 +26,19 @@ public class CardDao {
     @SneakyThrows
     public CardEntity getByName(String name) {
         return cardentityrepository.findByName(name).orElseThrow(
-                () -> new UserPrincipalNotFoundException("Not Found"));
+                () -> new IllegalArgumentException("Not Found"));
     }
 
     @SneakyThrows
     public CardEntity getByPokemonOwner(StudentEntity studentEntity) {
         return cardentityrepository.findByPokemonOwner(studentEntity).orElseThrow(
-                () -> new UserPrincipalNotFoundException("Not Found"));
+                () -> new IllegalArgumentException("Not Found"));
     }
 
     @SneakyThrows
     public CardEntity getById(UUID id) {
         return cardentityrepository.findById(id).orElseThrow(
-                () -> new UserPrincipalNotFoundException("Not Found"));
+                () -> new IllegalArgumentException("Not Found"));
     }
 
     @SneakyThrows

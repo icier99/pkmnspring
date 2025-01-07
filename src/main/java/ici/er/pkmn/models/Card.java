@@ -1,7 +1,6 @@
 package ici.er.pkmn.models;
 
 import ici.er.pkmn.entity.CardEntity;
-import ici.er.pkmn.entity.StudentEntity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +11,7 @@ import java.util.List;
 @Data
 @Builder
 public class Card implements Serializable {
+
     @Serial
     public static final long serialVersionUID = 1L;
     PokemonStage pokemonStage;
