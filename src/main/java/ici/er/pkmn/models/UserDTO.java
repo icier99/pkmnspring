@@ -1,4 +1,4 @@
-package ici.er.pkmn.entity;
+package ici.er.pkmn.models;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

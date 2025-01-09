@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,9 +17,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.Objects;
+import java.util.*;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -28,14 +29,21 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         String jwt = request.getHeader("Authorization");
+
+        log.info("From request {}", jwt);
+
         if (Objects.isNull(jwt) || !jwt.startsWith("Bearer")) {
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().equals("jwt")) {
-                    jwt = new String(Base64.getDecoder().decode(cookie.getValue()));
+            if (!Objects.isNull(request.getCookies())) {
+                for (Cookie cookie : request.getCookies()) {
+                    if (cookie.getName().equals("jwt")) {
+                        jwt = new String(Base64.getDecoder().decode(cookie.getValue()));
+                        log.info("From cookie {}", jwt);
+                    }
                 }
             }
-            if (Objects.isNull(jwt)) {
+            if (Objects.isNull(jwt) || jwt.startsWith("Basic")) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -44,7 +52,6 @@ public class JwtFilter extends OncePerRequestFilter {
         if (jwt.startsWith("Bearer")) {
             jwt = jwt.substring(7);
         }
-        jwtService.verify(jwt);
 
         DecodedJWT decodedJWT = jwtService.verify(jwt);
 
@@ -53,13 +60,19 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(
-                        decodedJWT.getSubject(),
-                        null,
-                        decodedJWT.getClaim("authorities").asList(SimpleGrantedAuthority.class)
-                )
-        );
+        var authoritiesClaim = decodedJWT.getClaim("authorities");
+        if (authoritiesClaim != null && !authoritiesClaim.isNull()) {
+            SecurityContextHolder.getContext().setAuthentication(
+                    new UsernamePasswordAuthenticationToken(
+                            decodedJWT.getSubject(),
+                            null,
+                            decodedJWT.getClaim("authorities").asList(SimpleGrantedAuthority.class)
+                    )
+            );
+        }
+        else {
+            SecurityContextHolder.getContext().setAuthentication(null);
+        }
 
         filterChain.doFilter(request, response);
     }

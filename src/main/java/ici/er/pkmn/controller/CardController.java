@@ -1,7 +1,7 @@
 package ici.er.pkmn.controller;
 
-import ici.er.pkmn.entity.StudentEntity;
 import ici.er.pkmn.models.Card;
+import ici.er.pkmn.models.Student;
 import ici.er.pkmn.services.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +29,8 @@ public class CardController {
     }
 
     @GetMapping("/owner")
-    public Card getCardByPokemonOwner(@RequestBody StudentEntity studentEntity){
-        return cardService.getCardByPokemonOwner(studentEntity);
+    public Card getCardByPokemonOwner(@RequestBody Student student){
+        return cardService.getCardByPokemonOwner(student);
     }
 
     @GetMapping("/id/{id}")
@@ -41,5 +41,10 @@ public class CardController {
     @PostMapping("")
     public Card saveCard(@RequestBody Card card) {
         return cardService.saveCard(card);
+    }
+
+    @GetMapping("/image")
+    public String getPokemonImage(@RequestParam String name, @RequestParam int number) {
+        return cardService.getPokemonImage(name, number);
     }
 }

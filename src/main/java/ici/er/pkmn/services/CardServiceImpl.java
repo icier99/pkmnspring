@@ -1,12 +1,15 @@
 package ici.er.pkmn.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import ici.er.pkmn.dao.CardDao;
 import ici.er.pkmn.entity.CardEntity;
-import ici.er.pkmn.entity.StudentEntity;
 import ici.er.pkmn.models.Card;
+import ici.er.pkmn.models.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,8 +17,12 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardService {
+
     @Autowired
     private final CardDao cardDao;
+
+    @Autowired
+    private final RestTemplate restTemplate;
 
     @Override
     public List<Card> getAllCards() {
@@ -28,8 +35,8 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public Card getCardByPokemonOwner(StudentEntity studentEntity) {
-        return Card.fromEntity(cardDao.getByPokemonOwner(studentEntity));
+    public Card getCardByPokemonOwner(Student student) {
+        return Card.fromEntity(cardDao.getByPokemonOwnerId(student));
     }
 
     @Override
@@ -47,4 +54,20 @@ public class CardServiceImpl implements CardService {
         }
         return Card.fromEntity(cardDao.saveCard(CardEntity.toEntity(card)));
     }
+
+    @Override
+    public String getPokemonImage(String name, int number) {
+        String url = "https://api.pokemontcg.io/v2/cards?q=name:\"" + name + "\" number:" + number;
+
+        ResponseEntity<JsonNode> response = restTemplate.getForEntity(url, JsonNode.class);
+
+        if (response.getBody() != null && response.getBody().has("data")) {
+            JsonNode data = response.getBody().get("data").get(0);
+            return data.path("images").path("large").asText();
+        }
+        return "Pokemon not found";
+    }
+
+
+
 }

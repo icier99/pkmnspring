@@ -59,6 +59,8 @@ public class JwtService {
 
             DecodedJWT decodedJWT = verifier.verify(jwt);
 
+
+
             if (Objects.isNull(userDetailsService.loadUserByUsername(decodedJWT.getSubject()))) {
                 log.error("Пользователь не найден");
                 return null;

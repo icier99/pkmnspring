@@ -25,7 +25,7 @@ public class CardEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-        private UUID id;
+    private UUID id;
 
     @Column(name = "stage")
     @Enumerated(EnumType.STRING)

@@ -1,34 +1,33 @@
 package ici.er.pkmn.controller;
 
-import ici.er.pkmn.security.jwt.JwtService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
+import ici.er.pkmn.models.UserDTO;
+import ici.er.pkmn.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import javax.security.auth.login.CredentialException;
 
 @RestController
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     @Autowired
-    private final JwtService jwtService;
+    private final UserService userService;
 
-    @PostMapping("/success")
-    public RedirectView success(@AuthenticationPrincipal UserDetails userDetails, HttpServletResponse servletResponse) {
-        String jwt = jwtService.createToken(userDetails.getUsername(), userDetails.getAuthorities().iterator().next());
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody UserDTO userDTO) throws CredentialException {
+        String jwt = userService.loginUser(userDTO);
+        return ResponseEntity.ok(jwt);
+    }
 
-        servletResponse.addCookie(
-                new Cookie("jwt", Base64.getEncoder().encodeToString(jwt.getBytes(StandardCharsets.UTF_8)))
-        );
-
-        return new RedirectView("/api/v1/students/all");
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody UserDTO userDTO) {
+        userService.registerUser(userDTO);
+        return ResponseEntity.ok("Пользователь зарегистрирован");
     }
 }

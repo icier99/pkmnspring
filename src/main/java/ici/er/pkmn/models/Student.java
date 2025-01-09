@@ -16,15 +16,6 @@ public class Student implements Serializable {
     String familyName;
     String group;
 
-    @Override
-    public String toString() {
-        return "Student" +
-                " surName=" + surName +
-                ", firstName=" + firstName +
-                ", familyName=" + familyName +
-                ", group=" + group;
-    }
-
     public static Student fromEntity(StudentEntity entity) {
         if (entity != null) {
             return Student.builder()

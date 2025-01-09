@@ -28,24 +28,6 @@ public class Card implements Serializable {
     Student pokemonOwner;
     String number;
 
-    @Override
-    public String toString() {
-        return
-                "\n\npokemonStage=" + pokemonStage +
-                "\nname=" + name +
-                "\nhp=" + hp +
-                "\npokemonType=" + pokemonType +
-                "\nevolvesFrom=" + evolvesFrom +
-                "\nskills=" + skills +
-                "\nweaknessType=" + weaknessType +
-                "\nresistanceType=" + resistanceType +
-                "\nretreatCost=" + retreatCost  +
-                "\ngameSet=" + gameSet  +
-                "\nregulationMark=" + regulationMark +
-                "\npokemonOwner=" + pokemonOwner +
-                "\nnumber=" + number + "\n";
-    }
-
     public static Card fromEntity(CardEntity entity) {
         if (entity != null) {
             return Card.builder()
